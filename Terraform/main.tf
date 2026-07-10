@@ -6,7 +6,7 @@ provider "aws" {
 # ------------------------- KEY PAIR -------------------------
 resource "aws_key_pair" "key_pair" {
   key_name   = "MyKey"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC2dlxKnmfweH+cDrw9qCr/YFR+I/RS/Vkain0vLlm4OAyeZpmZS0xKkmTvDSHQXKqakY5USTP2EfT0rBjWkFJj4YjlxGhp3mpoDk9kq84Vt1M74CgECDJl2qfXqK7pJ5iPuaq0wA/nAHv79HwJrdmMBxIq7W/Fq7CJLbXAVJT6lTOGlutS71Ruko50qnGVQMhSvhLGFlQATi8mSWetIEjRELrj46HoNfCs+ubo5yD/ICsXMN1eaxtLKkK9wRGBgz1OM2KyLLwLEw7fd4L+D1OutA2/4+6ak9VJqOGc5rCn1wr8QlosIWIGoEifSlsvUHPmi9WjpUMdks0gmHzumicLFtV7y/dmV1IhJeyRC02jtypZUk6sbdXY2tvSfFehykCgrBu5ByR0s85AMJH5Gr8xczrfH6nU0xYDiUAXER8enb4XPOk5ea4kZcaFdykf/sPgfB8FT+aCE59Y6H0gWmG8ehw98Cj2RLvl2xG+SDcGbF0JrMF8f8JJ5zBVq8wN6ZE= Dell@MADHU-KIRAN"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC5+4VM5YvY6XEIecpSJYP2dUWav9nyJMaSq9bEa4S072b7sVMa9mMCpbo3iFOIRuUQaUnE/qydiRHchBUSWF43IPjnCoucOMEKX5xCJzFrlrZTJ5fOyM8UHZky68HupZjv6Zwe7r4e+qzRZ1kQVbh/AOEY0UZXIjQgbAzweggpa+oy88+Jg5KVo0J1T2GvpRS6/wWIR/19iB3S5VsmGHS/Tg+TVMbxKBhXpdOtheA6mQ77zxNIGUAHU6jjjmEbb+Xi5aJml7cnxITl+25F9sa0rSLPBqXXraBD8GOH5Hxs7qY38bgWwtmVWQmuKwvpFLPQT36S1xLs6CwnOuYRmfio0IA1VFlLCxtj9XZX+t+iA3UxyKA6AK1Z37QsCQtPZFwH5cgitTmVZ2BBv0n8qogP6Y6rsNLr0OLpFUfyekAGzk4d2/wvEgZAkDWM+eCAA6drW/yjjDnp7CrFagUOFpj7GOasWtpue1TlbhDLUNWp0GdJdObquf7ogmJ1MJkrtOE= Madhukiran@BOOK-6QJPLNSHMI"
 }
 
 # ------------------------- VPC -------------------------
@@ -75,6 +75,15 @@ resource "aws_security_group" "jenkins_sg" {
   }
 
   ingress {
+    description = "SonarQube HTTP"
+    from_port   = 9000
+    to_port     = 9000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+
+  ingress {
     description = "SSH"
     from_port   = 22
     to_port     = 22
@@ -136,7 +145,7 @@ resource "aws_security_group" "myapp_sg" {
 
 # ------------------------- JENKINS INSTANCE -------------------------
 resource "aws_instance" "jenkins" {
-  ami                    = "ami-0fa3fe0fa7920f68e"
+  ami                    = "ami-002192a70217ac181"
   instance_type          = "t2.large"
   subnet_id              = aws_subnet.public_subnet.id
   key_name               = aws_key_pair.key_pair.key_name
@@ -152,16 +161,17 @@ resource "aws_instance" "jenkins" {
   provisioner "remote-exec" {
     inline = [
       "sudo yum update -y",
-      "sudo yum install wget git maven ansible docker -y",
+      "sudo yum install java-21-amazon-corretto -y",
       "sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo",
       "sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key",
       "sudo yum install jenkins -y",
       "sudo systemctl enable jenkins && sudo systemctl start jenkins",
+      "sudo yum install wget git maven ansible docker -y",
       "sudo systemctl enable docker && sudo systemctl start docker",
       "sudo usermod -aG docker ec2-user",
       "sudo usermod -aG docker jenkins",
       "sudo chmod 666 /var/run/docker.sock",
-      "sudo docker run -d --name sonar -p 9000:9000 sonarqube",
+      "sudo docker run -d --name sonarct -p 9000:9000 sonarqube",
       "sudo rpm -ivh https://github.com/aquasecurity/trivy/releases/download/v0.18.3/trivy_0.18.3_Linux-64bit.rpm"
     ]
   }
@@ -171,7 +181,7 @@ resource "aws_instance" "jenkins" {
 
 # ------------------------- MyApp INSTANCE -------------------------
 resource "aws_instance" "myapp" {
-  ami                    = "ami-0fa3fe0fa7920f68e"
+  ami                    = "ami-002192a70217ac181"
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.public_subnet.id
   key_name               = aws_key_pair.key_pair.key_name
