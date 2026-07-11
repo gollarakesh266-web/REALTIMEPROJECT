@@ -1,35 +1,33 @@
+
+---
 apiVersion: apps/v1
 kind: Deployment
-metadata:
-  name: mc-app
-  labels:
-    app: mc-app
+metadata: mc-project
 spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: mc-app
-  template:
-    metadata:
-      labels:
-        app: mc-app
-    spec:
-      containers:
-      - name: mc-app
-        image: devopshubg333/k8s:2
-        ports:
-        - containerPort: 8080
+ replicas: 3
+ selector:
+  matchLabels:
+   app: mc
+ template:
+  metadata:
+   labels:
+    app: mc
+  spec:
+  - containers:
+     name: mc-pod
+     image: dockrepo1:xyz
+     ports:
+     - containerPort: 8080
+
 ---
 apiVersion: v1
 kind: Service
-metadata:
-  name: mc-app-service
+metadata: mc-service
 spec:
-  type: LoadBalancer
-  ports:
-  - name: http
-    port: 80
-    targetPort: 8080
-    protocol: TCP
-  selector:
-    app: mc-app
+ type: LoadBalancer
+ selector:
+  app: mc
+ ports:
+ - port: 8080
+   targetPort: 8080
+   protocol: TCP
