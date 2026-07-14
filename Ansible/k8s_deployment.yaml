@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: mc-pod
-        image: gollarakesh/dockrepo1:xyz
+        image: gollarakesh/dockrepo1:19
         ports:
         - containerPort: 8080
 
