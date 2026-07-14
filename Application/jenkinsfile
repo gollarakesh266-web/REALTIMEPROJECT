@@ -18,8 +18,8 @@ pipeline {
             steps {
                 echo 'Scanned sucessfully'
                 sh ''' cd Application && mvn sonar:sonar \
-                       -Dsonar.host.url=http://3.87.121.44:9000 \
-                       -Dsonar.login=squ_06060d3dd02d86b39907aabd21f7f891b6838bb3 '''
+                       -Dsonar.host.url=http://54.145.235.151:9000 \
+                       -Dsonar.login=squ_75c500c33665d9604bd99909e6c2f3ab28ce5aeb '''
             }
         }
         stage('Build Docker image') {
