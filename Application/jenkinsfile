@@ -1,6 +1,9 @@
 
 pipeline {
     agent any
+    tools {
+        maven 'maven_3.9.16'
+    }
     stages {
         stage('Clone code') {
             steps {
@@ -49,17 +52,17 @@ pipeline {
         }
         stage('Update the deployment yaml file') {
            environment {
-            $GITHUB_REPO = "REALTIMEPROJECT"
-            $GITHUB_USER = "gollarakesh266-web"
+            GITHUB_REPO = "REALTIMEPROJECT"
+            GITHUB_USER = "gollarakesh266-web"
            }
             steps {
                 withCredentials([string(credentialsId: 'github', variable: 'github')]) {
-                  sh '''git config.user.email "gollarakesh266@gmail.com"
-                        git config.user.name "gollarakesh266-web"
-                        sed -i "s/dockrepo1:.*dockrepo1:${BUILD_NUMBER}/g" Ansible/k8s_deployment.yaml
+                  sh '''git config user.email "gollarakesh266@gmail.com"
+                        git config user.name "gollarakesh266-web"
+                        sed -i "s/dockrepo1:.*/dockrepo1:${BUILD_NUMBER}/g" Ansible/k8s_deployment.yaml
                         git add . 
                         git commit -m "updated deploment successfully"
-                        git push https://${github}@github.com/${GITHUB_REPO}/{GITHUB_USER} HEAD:main '''
+                        git push https://${github}@github.com/${GITHUB_USER}/${GITHUB_REPO} HEAD:main '''
                     }
                 
             }
