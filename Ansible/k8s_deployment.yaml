@@ -2,7 +2,8 @@
 ---
 apiVersion: apps/v1
 kind: Deployment
-metadata: mc-project
+metadata:
+ mc-project
 spec:
  replicas: 3
  selector:
@@ -22,7 +23,8 @@ spec:
 ---
 apiVersion: v1
 kind: Service
-metadata: mc-service
+metadata: 
+ mc-service
 spec:
  type: LoadBalancer
  selector:
