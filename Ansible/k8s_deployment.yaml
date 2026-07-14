@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
- mc-project
+  name: mc-project
 spec:
  replicas: 3
  selector:
@@ -16,7 +16,7 @@ spec:
   spec:
   - containers:
      name: mc-pod
-     image: dockrepo1:15
+     image: dockrepo1:12
      ports:
      - containerPort: 8080
 
@@ -24,7 +24,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata: 
- mc-service
+ name: mc-service
 spec:
  type: LoadBalancer
  selector:
