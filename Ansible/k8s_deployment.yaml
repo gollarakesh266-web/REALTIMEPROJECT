@@ -15,7 +15,7 @@ spec:
   spec:
   - containers:
      name: mc-pod
-     image: dockrepo1:5
+     image: dockrepo1:7
      ports:
      - containerPort: 8080
 
