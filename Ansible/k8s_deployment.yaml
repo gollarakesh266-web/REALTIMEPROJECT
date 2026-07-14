@@ -14,8 +14,8 @@ spec:
    labels:
     app: mc
   spec:
-  - containers:
-     name: mc-pod
+    containers:
+    - name: mc-pod
      image: dockrepo1:16
      ports:
      - containerPort: 8080
